@@ -1,9 +1,13 @@
 from fastapi import FastAPI
-from backend.db.database import get_db, init_db
-from backend.scraper.ai_news_scraper import scrape_news
+from backend.scraper.news import scrape_news
 from backend.summarizer import summarize
+from backend.db.database import init_db
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup():
+    init_db()
 
 @app.get("/")
 def home():

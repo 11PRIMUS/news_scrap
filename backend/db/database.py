@@ -1,19 +1,19 @@
-import sqlite3
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-def get_db():
-    conn = sqlite3.connect("backend/db/ai_news.db")
-    return conn
+DATABASE_URL = "postgresql://user:password@localhost/ai_tracker"
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+Base = declarative_base()
+
+class News(Base):
+    __tablename__ = "news"
+    id = Column(Integer, primary_key=True, index=True)
+    source = Column(String)
+    title = Column(String)
+    link = Column(String)
+    summary = Column(String)
 
 def init_db():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS news (
-            id INTEGER PRIMARY KEY,
-            source TEXT,
-            title TEXT,
-            link TEXT,
-            summary TEXT
-        )
-    ''')
-    db.commit()
+    Base.metadata.create_all(bind=engine)
